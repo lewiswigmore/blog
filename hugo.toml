@@ -3,6 +3,14 @@ languageCode = "en-us"
 title = "0xlews"
 theme = "PaperMod"
 
+# Author information
+[author]
+name = "Lewis"
+email = "contact@0xlews.com"  # Update with your actual contact email
+
+# Site description for RSS and meta tags
+description = "Cybersecurity insights, malware analysis, and technical research by Lewis - a security analyst at Microsoft"
+
 # Enable syntax highlighting for code blocks
 pygmentsUseClasses = true
 pygmentsCodeFences = true
@@ -28,7 +36,7 @@ favicon = "/favicon/favicon.ico"
 favicon16x16 = "/favicon/favicon-16x16.png"
 favicon32x32 = "/favicon/favicon-32x32.png"
 apple_touch_icon = "/favicon/apple-touch-icon.png"
-safari_pinned_tab = "/favicon/safari-pinned-tab.svg"
+# safari_pinned_tab = "/favicon/safari-pinned-tab.svg"  # File doesn't exist
 
 # Enable search
 enableSearch = true
@@ -56,8 +64,8 @@ ShowWordCount = true
 # Show last modified date
 ShowLastMod = true
 
-# Custom CSS
-customCSS = ["css/custom.css"]
+# Custom CSS - uncomment when you have custom styles
+# customCSS = ["css/custom.css"]
 
 # Archives page configuration
 [params.fuseOpts]
@@ -72,7 +80,7 @@ keys = ["title", "permalink", "summary", "content"]
 [params.homeInfoParams]
 Title = "Welcome"
 Content = """
-I'm Lewis, a cyber security analyst working in security operations, incident response and other general research at Microsoft. This blog contains my research, personal thoughts, and projects. Feel free to explore my [posts](/posts/) or search for specific topics using the [search](/search/) function.
+I'm Lewis, a cybersecurity analyst working in security operations, incident response, and research at Microsoft. This blog contains my research, personal thoughts, and projects focused on cybersecurity, malware analysis, and digital forensics. Feel free to explore my [posts](/posts/) or search for specific topics using the [search](/search/) function.
 """
 
 [[params.socialIcons]]
@@ -110,3 +118,9 @@ identifier = "search"
 name = "Search"
 url = "/search/"
 weight = 40
+
+[[menu.main]]
+identifier = "contact"
+name = "Contact"
+url = "/contact/"
+weight = 50
