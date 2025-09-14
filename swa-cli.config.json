@@ -1,0 +1,12 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "0xlews-blog": {
+      "appLocation": ".",
+      "outputLocation": "public",
+      "appBuildCommand": "./bin/hugo.exe",
+      "run": "./bin/hugo.exe server -D",
+      "appDevserverUrl": "http://localhost:1313"
+    }
+  }
+}

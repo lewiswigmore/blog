@@ -1,11 +1,11 @@
-// Enhanced Grid Trail Effect - Webflow Inspired
+// Grid Trail Effect
 (function() {
     'use strict';
     
     let canvas, ctx;
     let mouseX = 0, mouseY = 0;
     let prevMouseX = 0, prevMouseY = 0;
-    let gridSize = 40; // Increased from 25 to 40
+    let gridSize = 40;
     let maxInfluenceRadius = 150;
     let gridPoints = new Map();
     let animationId;
