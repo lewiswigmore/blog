@@ -4,10 +4,12 @@
 {{- /* Debug script for search page background */ -}}
 <script src="{{ "/js/search-background.js" | relURL }}" defer></script>
 
-{{- /* Grid Trail Source Attribution */ -}}
+{{- /* Grid Trail Source Attribution - Only on search page */ -}}
+{{- if (or (eq .Layout "search") (eq .Kind "search") (eq .Type "search") (and .IsPage (in .RelPermalink "/search"))) -}}
 <div class="grid-trail-attribution">
     <p>Grid trail effect inspired by <a href="https://grid-trail.webflow.io/" target="_blank" rel="noopener">grid-trail.webflow.io</a></p>
 </div>
+{{- end -}}
 
 <style>
 .grid-trail-attribution {
