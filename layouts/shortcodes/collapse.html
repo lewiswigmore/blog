@@ -1,0 +1,53 @@
+{{- $summary := .Get "summary" | default "Click to expand" -}}
+{{- $open := .Get "open" | default false -}}
+
+<details{{ if $open }} open{{ end }}>
+  <summary>{{ $summary | markdownify }}</summary>
+  <div class="collapse-content">
+    {{ .Inner | markdownify }}
+  </div>
+</details>
+
+<style>
+details {
+  margin: 1em 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0;
+}
+
+details > summary {
+  padding: 0.75em 1em;
+  cursor: pointer;
+  background-color: var(--theme);
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+  user-select: none;
+}
+
+details[open] > summary {
+  border-radius: 6px 6px 0 0;
+  border-bottom: 1px solid var(--border);
+}
+
+details > summary:hover {
+  background-color: var(--border);
+}
+
+.collapse-content {
+  padding: 1em;
+}
+
+.collapse-content pre {
+  margin: 0.5em 0;
+}
+
+/* Dark theme specific styles */
+[data-theme="dark"] details > summary {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] details > summary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+</style>

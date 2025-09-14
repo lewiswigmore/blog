@@ -1,0 +1,36 @@
+{{- /* Custom JavaScript for reading progress */ -}}
+<script src="{{ "/js/reading-progress.js" | relURL }}" defer></script>
+
+{{- /* Debug script for search page background */ -}}
+<script src="{{ "/js/search-background.js" | relURL }}" defer></script>
+
+{{- /* Grid Trail Source Attribution */ -}}
+<div class="grid-trail-attribution">
+    <p>Grid trail effect inspired by <a href="https://grid-trail.webflow.io/" target="_blank" rel="noopener">grid-trail.webflow.io</a></p>
+</div>
+
+<style>
+.grid-trail-attribution {
+    text-align: center;
+    margin: 1rem 0 0.5rem 0;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+.grid-trail-attribution p {
+    margin: 0;
+    color: var(--secondary);
+}
+
+.grid-trail-attribution a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.grid-trail-attribution a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+</style>

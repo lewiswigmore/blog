@@ -64,8 +64,8 @@ ShowWordCount = true
 # Show last modified date
 ShowLastMod = true
 
-# Custom CSS - uncomment when you have custom styles
-# customCSS = ["css/custom.css"]
+# Custom CSS
+customCSS = ["css/custom.css"]
 
 # Archives page configuration
 [params.fuseOpts]
