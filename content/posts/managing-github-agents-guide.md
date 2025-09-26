@@ -1,6 +1,6 @@
 +++
 title = 'A Sophisticated Guide to Managing Your GitHub Agent Workforce'
-date = 2025-09-26T19:52:56Z
+date = 2025-08-26T19:52:56Z
 draft = false
 tags = ["AI", "GitHub", "automation", "management"]
 categories = ["AI & Tools"]

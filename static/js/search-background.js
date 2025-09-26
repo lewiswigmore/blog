@@ -360,13 +360,24 @@
     }
     
     function handleTouch(e) {
-        // Use passive: false only when necessary for preventDefault
-        if (e.type === 'touchstart' || e.type === 'touchmove') {
+        // Don't preventDefault if the touch is on a search input
+        const target = e.target;
+        const isSearchInput = target && (
+            target.matches('input[type="search"]') ||
+            target.matches('#searchbox input') ||
+            target.matches('.search-input') ||
+            target.matches('#search-input') ||
+            target.matches('#fastSearch input') ||
+            target.matches('.search-container input')
+        );
+        
+        // Only preventDefault for touches outside of search inputs
+        if (!isSearchInput && (e.type === 'touchstart' || e.type === 'touchmove')) {
             e.preventDefault();
         }
         
         const touch = e.touches[0] || e.changedTouches[0];
-        if (touch) {
+        if (touch && !isSearchInput) { // Only create trail if not touching search input
             prevMouseX = mouseX || touch.clientX;
             prevMouseY = mouseY || touch.clientY;
             mouseX = touch.clientX;
@@ -476,6 +487,8 @@
             .search-input, #searchbox, #search-input, input[type="search"] {
                 position: relative;
                 z-index: 10 !important;
+                pointer-events: auto !important; /* Explicitly enable touch/click events */
+                touch-action: manipulation !important; /* Enable touch interactions */
             }
             
             /* Make search input background transparent to show grid pattern */
@@ -515,7 +528,7 @@
             
             /* Mobile-specific optimizations */
             @media screen and (max-width: 768px) {
-                /* Reduce blur on mobile for better performance */
+                /* Ensure search input is fully interactive on mobile */
                 #searchbox input, 
                 .search-input, 
                 input[type="search"], 
@@ -529,6 +542,17 @@
                     min-height: 44px !important; /* iOS accessibility guidelines */
                     -webkit-appearance: none !important; /* Remove iOS styling */
                     appearance: none !important;
+                    pointer-events: auto !important; /* Ensure touch works */
+                    touch-action: manipulation !important; /* Enable touch */
+                    -webkit-user-select: text !important; /* Enable text selection */
+                    user-select: text !important;
+                }
+                
+                /* Ensure parent containers don't block touch */
+                #searchbox,
+                .search-container {
+                    pointer-events: auto !important;
+                    touch-action: manipulation !important;
                 }
                 
                 /* Adjust search input for mobile */
