@@ -5,8 +5,8 @@
     let canvas, ctx;
     let mouseX = 0, mouseY = 0;
     let prevMouseX = 0, prevMouseY = 0;
-    let gridSize = 40;
-    let maxInfluenceRadius = 150;
+    let gridSize = getResponsiveGridSize(); // Make grid size responsive
+    let maxInfluenceRadius = Math.min(150, window.innerWidth * 0.2); // Responsive influence radius
     let gridPoints = new Map();
     let animationId;
     let searchBarExpansion = false;
@@ -15,6 +15,23 @@
     let lastMouseMoveTime = 0;
     let mouseInactivityThreshold = 1000; // 1 second of inactivity
     let inactivityFadeSpeed = 0.003; // Slow fade when mouse stops
+    
+    // Calculate responsive grid size based on screen width
+    function getResponsiveGridSize() {
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 480) return 25;        // Small mobile
+        if (screenWidth < 768) return 30;        // Large mobile/small tablet
+        if (screenWidth < 1024) return 35;       // Tablet
+        return 40;                               // Desktop
+    }
+    
+    // Calculate responsive influence radius based on screen size
+    function getResponsiveInfluenceRadius() {
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 480) return 80;         // Smaller radius on mobile
+        if (screenWidth < 768) return 100;        // Medium radius on tablets
+        return 150;                               // Full radius on desktop
+    }
     
     function createCanvas() {
         canvas = document.createElement('canvas');
@@ -99,11 +116,16 @@
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
+        // Mobile performance optimization - reduce complexity
+        const isMobile = window.innerWidth < 768;
+        const angleStep = isMobile ? 0.4 : 0.2; // Fewer angles on mobile
+        const radiusStep = isMobile ? gridSize * 4 : gridSize; // Larger radius steps on mobile
+        
         // Handle search bar expansion effect
         if (searchBarExpansion) {
             // Create a more focused expansion pattern around the search bar
-            for (let angle = 0; angle < Math.PI * 2; angle += 0.2) { // More detailed angles
-                for (let radius = 0; radius <= expansionRadius; radius += gridSize) {
+            for (let angle = 0; angle < Math.PI * 2; angle += angleStep) {
+                for (let radius = 0; radius <= expansionRadius; radius += radiusStep) {
                     const x = expansionCenter.x + Math.cos(angle) * radius;
                     const y = expansionCenter.y + Math.sin(angle) * radius;
                     
@@ -115,8 +137,8 @@
                         if (intensity > 0.05) { // Lower threshold for more coverage
                             addGridPoint(x, y, intensity);
                             
-                            // Add some organic scatter for visual interest
-                            if (Math.random() > 0.7 && intensity > 0.3) {
+                            // Add some organic scatter for visual interest (less on mobile)
+                            if (!isMobile && Math.random() > 0.7 && intensity > 0.3) {
                                 const scatterDistance = gridSize * (0.5 + Math.random() * 1.5);
                                 const scatterAngle = Math.random() * Math.PI * 2;
                                 const scatterX = x + Math.cos(scatterAngle) * scatterDistance;
@@ -141,9 +163,12 @@
             if (isMouseActive) {
                 const influencePoints = [];
                 
-                // Add points in a radius around the mouse
-                for (let angle = 0; angle < Math.PI * 2; angle += 1.0) { // Increased from 0.6 to 1.0
-                    for (let radius = 0; radius <= maxInfluenceRadius; radius += gridSize * 3) { // Increased from gridSize * 2 to gridSize * 3
+                // Add points in a radius around the mouse (optimized for mobile)
+                const mouseAngleStep = isMobile ? 1.5 : 1.0; // Fewer angles on mobile
+                const mouseRadiusStep = isMobile ? gridSize * 4 : gridSize * 3; // Larger steps on mobile
+                
+                for (let angle = 0; angle < Math.PI * 2; angle += mouseAngleStep) {
+                    for (let radius = 0; radius <= maxInfluenceRadius; radius += mouseRadiusStep) {
                         const x = mouseX + Math.cos(angle) * radius;
                         const y = mouseY + Math.sin(angle) * radius;
                         
@@ -151,11 +176,11 @@
                             const distance = Math.sqrt(Math.pow(x - mouseX, 2) + Math.pow(y - mouseY, 2));
                             const intensity = Math.max(0, 1 - (distance / maxInfluenceRadius));
                             
-                            if (intensity > 0.5) { // Increased threshold from 0.3 to 0.5
+                            if (intensity > 0.5) {
                                 addGridPoint(x, y, intensity);
                                 
-                                // Add some scattered adjacent squares for less linear appearance
-                                if (Math.random() > 0.5) { // Increased chance from 60% to 50%
+                                // Reduce scatter on mobile for performance
+                                if (!isMobile && Math.random() > 0.5) {
                                     const scatterOffsets = [
                                         { dx: gridSize, dy: 0 },
                                         { dx: -gridSize, dy: 0 },
@@ -163,23 +188,23 @@
                                         { dx: 0, dy: -gridSize },
                                         { dx: gridSize, dy: gridSize },
                                         { dx: -gridSize, dy: -gridSize },
-                                        { dx: gridSize, dy: -gridSize }, // Added more diagonal options
+                                        { dx: gridSize, dy: -gridSize }, 
                                         { dx: -gridSize, dy: gridSize },
-                                        { dx: gridSize * 2, dy: 0 }, // Added farther positions
+                                        { dx: gridSize * 2, dy: 0 }, 
                                         { dx: -gridSize * 2, dy: 0 },
                                         { dx: 0, dy: gridSize * 2 },
                                         { dx: 0, dy: -gridSize * 2 }
                                     ];
                                     
-                                    // More random number of scattered squares (0-3)
-                                    const numScatter = Math.floor(Math.random() * 4); // 0, 1, 2, or 3 squares
-                                    const usedOffsets = new Set(); // Prevent duplicate positions
+                                    // Fewer scattered squares on mobile (0-2 instead of 0-3)
+                                    const maxScatter = isMobile ? 2 : 4;
+                                    const numScatter = Math.floor(Math.random() * maxScatter);
+                                    const usedOffsets = new Set();
                                     
                                     for (let i = 0; i < numScatter; i++) {
                                         let attempts = 0;
                                         let randomOffset;
                                         
-                                        // Try to find an unused offset position
                                         do {
                                             randomOffset = scatterOffsets[Math.floor(Math.random() * scatterOffsets.length)];
                                             attempts++;
@@ -191,7 +216,6 @@
                                             const scatterY = y + randomOffset.dy;
                                             
                                             if (scatterX >= 0 && scatterX <= window.innerWidth && scatterY >= 0 && scatterY <= window.innerHeight) {
-                                                // Much more varied intensity (20-70% instead of 40-80%)
                                                 const scatterIntensity = intensity * (0.2 + Math.random() * 0.5);
                                                 addGridPoint(scatterX, scatterY, scatterIntensity);
                                             }
@@ -336,8 +360,12 @@
     }
     
     function handleTouch(e) {
-        e.preventDefault();
-        const touch = e.touches[0];
+        // Use passive: false only when necessary for preventDefault
+        if (e.type === 'touchstart' || e.type === 'touchmove') {
+            e.preventDefault();
+        }
+        
+        const touch = e.touches[0] || e.changedTouches[0];
         if (touch) {
             prevMouseX = mouseX || touch.clientX;
             prevMouseY = mouseY || touch.clientY;
@@ -345,9 +373,13 @@
             mouseY = touch.clientY;
             lastMouseMoveTime = Date.now(); // Track touch activity
             
-            // Add trail points for touch movement
+            // Add trail points for touch movement with mobile optimization
             const distance = Math.sqrt(Math.pow(mouseX - prevMouseX, 2) + Math.pow(mouseY - prevMouseY, 2));
-            const steps = Math.max(1, Math.floor(distance / 5));
+            
+            // Reduce steps on mobile for better performance
+            const isMobile = window.innerWidth < 768;
+            const stepDivisor = isMobile ? 8 : 5; // Fewer steps on mobile
+            const steps = Math.max(1, Math.floor(distance / stepDivisor));
             
             for (let i = 0; i <= steps; i++) {
                 const t = i / steps;
@@ -358,6 +390,14 @@
                 addGridPoint(x, y, intensity);
             }
         }
+    }
+    
+    function handleTouchEnd(e) {
+        mouseX = null;
+        mouseY = null;
+        // Clean up any remaining touch references
+        prevMouseX = 0;
+        prevMouseY = 0;
     }
     
     function triggerSearchBarExpansion() {
@@ -473,6 +513,90 @@
                 opacity: 0.7 !important;
             }
             
+            /* Mobile-specific optimizations */
+            @media screen and (max-width: 768px) {
+                /* Reduce blur on mobile for better performance */
+                #searchbox input, 
+                .search-input, 
+                input[type="search"], 
+                #search-input,
+                #fastSearch input,
+                .search-container input {
+                    backdrop-filter: blur(2px) !important;
+                    font-size: 16px !important; /* Prevent zoom on iOS */
+                    padding: 12px 16px !important; /* Better touch targets */
+                    border-radius: 8px !important;
+                    min-height: 44px !important; /* iOS accessibility guidelines */
+                    -webkit-appearance: none !important; /* Remove iOS styling */
+                    appearance: none !important;
+                }
+                
+                /* Adjust search input for mobile */
+                #searchbox input:focus, 
+                .search-input:focus, 
+                input[type="search"]:focus, 
+                #search-input:focus,
+                #fastSearch input:focus {
+                    box-shadow: 0 0 0 1px rgba(0, 212, 170, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+                    transform: none !important; /* Prevent unwanted transforms on focus */
+                }
+                
+                /* Reduce background opacity on mobile */
+                body.search-enhanced::before {
+                    opacity: 0.01 !important;
+                }
+                
+                /* Search container mobile adjustments */
+                #searchbox,
+                .search-container {
+                    margin: 16px 0 !important;
+                    width: 100% !important;
+                }
+            }
+            
+            @media screen and (max-width: 480px) {
+                /* Further reduce effects on small screens */
+                #searchbox input, 
+                .search-input, 
+                input[type="search"], 
+                #search-input,
+                #fastSearch input,
+                .search-container input {
+                    backdrop-filter: blur(1px) !important;
+                    padding: 14px 18px !important; /* Larger padding for small screens */
+                    font-size: 16px !important; /* Consistent sizing */
+                }
+                
+                body.search-enhanced::before {
+                    opacity: 0.005 !important;
+                    background-size: 25px 25px !important;
+                }
+                
+                /* Ensure search results are properly spaced on mobile */
+                #searchResults {
+                    margin-top: 20px !important;
+                }
+                
+                #searchResults li {
+                    padding: 16px !important;
+                    margin: 12px 0 !important;
+                    border-radius: 12px !important;
+                }
+            }
+            
+            /* Landscape mobile adjustments */
+            @media screen and (max-width: 900px) and (max-height: 500px) {
+                #searchbox input, 
+                .search-input, 
+                input[type="search"], 
+                #search-input,
+                #fastSearch input,
+                .search-container input {
+                    min-height: 40px !important; /* Slightly smaller in landscape */
+                    padding: 10px 14px !important;
+                }
+            }
+            
             @keyframes backgroundShift {
                 0%, 100% { transform: translate(0, 0); }
                 25% { transform: translate(1px, -1px); }
@@ -484,7 +608,19 @@
     }
     
     function handleResize() {
+        // Update responsive values on resize
+        gridSize = getResponsiveGridSize();
+        maxInfluenceRadius = getResponsiveInfluenceRadius();
         resizeCanvas();
+        
+        // Update background grid size in CSS
+        const style = document.getElementById('webflow-background-grid');
+        if (style) {
+            style.textContent = style.textContent.replace(
+                /background-size: \d+px \d+px;/,
+                `background-size: ${gridSize}px ${gridSize}px;`
+            );
+        }
     }
     
     function cleanup() {
@@ -511,13 +647,11 @@
             
             document.addEventListener('mousemove', handleMouseMove);
             
-            // Add touch event support for mobile
+            // Add optimized touch event support for mobile
             document.addEventListener('touchstart', handleTouch, { passive: false });
             document.addEventListener('touchmove', handleTouch, { passive: false });
-            document.addEventListener('touchend', () => {
-                mouseX = null;
-                mouseY = null;
-            });
+            document.addEventListener('touchend', handleTouchEnd, { passive: true });
+            document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
             
             window.addEventListener('resize', handleResize);
             window.addEventListener('beforeunload', cleanup);
