@@ -116,13 +116,21 @@
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Mobile performance optimization - reduce complexity
+        // Mobile optimization - use different effect entirely
         const isMobile = window.innerWidth < 768;
-        const angleStep = isMobile ? 0.4 : 0.2; // Fewer angles on mobile
-        const radiusStep = isMobile ? gridSize * 4 : gridSize; // Larger radius steps on mobile
         
-        // Handle search bar expansion effect
-        if (searchBarExpansion) {
+        // Mobile: Draw slow pulsing ambient effect instead of interactive trail
+        if (isMobile) {
+            drawMobileAmbientPulse();
+            return;
+        }
+        
+        // Desktop: Continue with original interactive effects
+        const angleStep = 0.2;
+        const radiusStep = gridSize;
+        
+        // Handle search bar expansion effect (desktop only - mobile uses ambient pulse)
+        if (searchBarExpansion && !isMobile) {
             // Create a more focused expansion pattern around the search bar
             for (let angle = 0; angle < Math.PI * 2; angle += angleStep) {
                 for (let radius = 0; radius <= expansionRadius; radius += radiusStep) {
@@ -137,8 +145,8 @@
                         if (intensity > 0.05) { // Lower threshold for more coverage
                             addGridPoint(x, y, intensity);
                             
-                            // Add some organic scatter for visual interest (less on mobile)
-                            if (!isMobile && Math.random() > 0.7 && intensity > 0.3) {
+                            // Add some organic scatter for visual interest
+                            if (Math.random() > 0.7 && intensity > 0.3) {
                                 const scatterDistance = gridSize * (0.5 + Math.random() * 1.5);
                                 const scatterAngle = Math.random() * Math.PI * 2;
                                 const scatterX = x + Math.cos(scatterAngle) * scatterDistance;
@@ -237,6 +245,80 @@
         });
     }
     
+    function drawMobileAmbientPulse() {
+        const time = Date.now() * 0.001; // Convert to seconds
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        
+        ctx.save();
+        
+        // Create slow pulsing effect around screen edges
+        const pulseIntensity = (Math.sin(time * 0.5) + 1) * 0.5; // Slow pulse (0.5 Hz)
+        const secondaryPulse = (Math.sin(time * 0.3 + Math.PI) + 1) * 0.5; // Offset pulse
+        
+        // Corner pulses
+        const corners = [
+            { x: 0, y: 0 }, // Top-left
+            { x: screenWidth, y: 0 }, // Top-right
+            { x: 0, y: screenHeight }, // Bottom-left
+            { x: screenWidth, y: screenHeight } // Bottom-right
+        ];
+        
+        corners.forEach((corner, index) => {
+            const intensity = (index % 2 === 0) ? pulseIntensity : secondaryPulse;
+            const maxRadius = Math.min(screenWidth, screenHeight) * 0.3;
+            const currentRadius = maxRadius * intensity * 0.3;
+            
+            if (currentRadius > 0) {
+                const gradient = ctx.createRadialGradient(
+                    corner.x, corner.y, 0,
+                    corner.x, corner.y, currentRadius
+                );
+                
+                gradient.addColorStop(0, `rgba(0, 212, 170, ${intensity * 0.05})`);
+                gradient.addColorStop(0.5, `rgba(0, 168, 255, ${intensity * 0.03})`);
+                gradient.addColorStop(1, `rgba(123, 104, 238, 0)`);
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(corner.x, corner.y, currentRadius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        });
+        
+        // Edge pulses - subtle lines along screen edges
+        const edgeIntensity = pulseIntensity * 0.02;
+        ctx.strokeStyle = `rgba(0, 212, 170, ${edgeIntensity})`;
+        ctx.lineWidth = 1;
+        
+        // Top edge
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(screenWidth, 0);
+        ctx.stroke();
+        
+        // Bottom edge  
+        ctx.beginPath();
+        ctx.moveTo(0, screenHeight);
+        ctx.lineTo(screenWidth, screenHeight);
+        ctx.stroke();
+        
+        // Left edge
+        ctx.strokeStyle = `rgba(0, 168, 255, ${secondaryPulse * 0.02})`;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, screenHeight);
+        ctx.stroke();
+        
+        // Right edge
+        ctx.beginPath();
+        ctx.moveTo(screenWidth, 0);
+        ctx.lineTo(screenWidth, screenHeight);
+        ctx.stroke();
+        
+        ctx.restore();
+    }
+
     function drawGridCell(x, y, intensity) {
         ctx.save();
         
@@ -671,11 +753,13 @@
             
             document.addEventListener('mousemove', handleMouseMove);
             
-            // Add optimized touch event support for mobile
-            document.addEventListener('touchstart', handleTouch, { passive: false });
-            document.addEventListener('touchmove', handleTouch, { passive: false });
-            document.addEventListener('touchend', handleTouchEnd, { passive: true });
-            document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+            // Only add touch events on desktop - mobile uses ambient pulse instead
+            if (window.innerWidth >= 768) {
+                document.addEventListener('touchstart', handleTouch, { passive: false });
+                document.addEventListener('touchmove', handleTouch, { passive: false });
+                document.addEventListener('touchend', handleTouchEnd, { passive: true });
+                document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+            }
             
             window.addEventListener('resize', handleResize);
             window.addEventListener('beforeunload', cleanup);
