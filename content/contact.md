@@ -11,7 +11,7 @@ I'm always interested in connecting with security professionals, researchers, an
 
 ### Best Ways to Reach Me
 
-- **Twitter/X**: [@zeroxlews](https://x.com/zeroxlews) - Best for quick questions and discussions
+- **Twitter/X**: [@0xl3w1512058163](https://x.com/0xl3w1512058163) - Best for quick questions and discussions
 - **GitHub**: [lewiswigmore](https://github.com/lewiswigmore) - For code-related discussions and contributions
 - **LinkedIn**: [aka.ms/lewiswigmore](https://aka.ms/lewiswigmore) - Professional connections and opportunities
 
