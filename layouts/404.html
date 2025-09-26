@@ -1,0 +1,166 @@
+{{- define "main" }}
+<div class="not-found-container">
+    <div class="not-found-content">
+        <div class="not-found-number">404</div>
+        <div class="michael-scott-easter-egg">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZnI2M3N3ZTBpaWprd3IwZm5yamc5d280b21veHkyNHYxaHEzcnViNyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/wQzqIYHE15zMI/giphy.gif" 
+                 alt="Michael Scott" 
+                 class="michael-gif" 
+                 loading="lazy">
+        </div>
+        <div class="not-found-message">
+            {{- with $.Site.GetPage "/404.md" }}
+                {{- .Content }}
+            {{- else }}
+                <h1>Oops! Page Not Found</h1>
+                <p>The page you're looking for doesn't exist. You might have followed a broken link or typed the URL incorrectly.</p>
+                
+                <h2>What you can do:</h2>
+                <ul>
+                    <li><a href="/">Go back to the homepage</a></li>
+                    <li><a href="/posts/">Browse all posts</a></li>
+                    <li><a href="/search/">Search for content</a></li>
+                    <li><a href="/archives/">Check the archives</a></li>
+                </ul>
+                
+                <p>If you think this is an error, feel free to reach out on <a href="https://x.com/zeroxlews">Twitter</a> or <a href="https://github.com/lewiswigmore">GitHub</a>.</p>
+            {{- end }}
+        </div>
+    </div>
+</div>
+
+<style>
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    text-align: center;
+    padding: 2rem;
+}
+
+.not-found-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.not-found-number {
+    font-size: 120px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.michael-scott-easter-egg {
+    margin: 2rem 0;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.michael-gif {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.michael-gif:hover {
+    transform: scale(1.05);
+}
+
+.not-found-message {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.not-found-message h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--content);
+}
+
+.not-found-message h2 {
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem 0;
+    color: var(--content);
+}
+
+.not-found-message p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: var(--content);
+}
+
+.not-found-message ul {
+    text-align: left;
+    display: inline-block;
+    margin: 1rem 0;
+}
+
+.not-found-message li {
+    margin: 0.5rem 0;
+}
+
+.not-found-message a {
+    color: var(--primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.not-found-message a:hover {
+    border-bottom-color: var(--primary);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .not-found-number {
+        font-size: 80px;
+    }
+    
+    .michael-gif {
+        max-width: 250px;
+    }
+    
+    .not-found-message h1 {
+        font-size: 1.5rem;
+    }
+    
+    .not-found-message h2 {
+        font-size: 1.3rem;
+    }
+    
+    .not-found-message p {
+        font-size: 1rem;
+    }
+    
+    .not-found-container {
+        padding: 1rem;
+    }
+}
+
+/* Dark mode considerations */
+@media (prefers-color-scheme: dark) {
+    .michael-gif {
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+    }
+}
+</style>
+{{- end }}{{/* end main */ -}}
