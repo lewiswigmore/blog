@@ -1,20 +1,18 @@
 #!/bin/bash
 
-# Check if .env file exists and source it
-if [ -f .env ]; then
-    source .env
-fi
+# Local build script for Hugo blog
+# Deployment to Azure Static Web Apps is handled automatically by GitHub Actions
+# See .github/workflows/azure-static-web-apps-mango-mud-0d92c8b03.yml
 
-# Build the site
+echo "Building Hugo site..."
 ./bin/hugo.exe
 
-# Check if deployment token is available
-if [ -z "$AZURE_DEPLOYMENT_TOKEN" ]; then
-    echo "Azure deployment token not found."
-    echo "Please set AZURE_DEPLOYMENT_TOKEN environment variable or create a .env file with:"
-    echo "AZURE_DEPLOYMENT_TOKEN=your_token_here"
-    exit 1
-fi
-
-# Deploy to Azure Static Web Apps
-swa deploy ./public --deployment-token $AZURE_DEPLOYMENT_TOKEN --env production
+echo "Build complete! Output is in ./public/"
+echo ""
+echo "To deploy:"
+echo "  git add ."
+echo "  git commit -m 'Your commit message'"
+echo "  git push origin main"
+echo ""
+echo "Deployment will happen automatically via GitHub Actions"
+echo "Site URL: https://mango-mud-0d92c8b03.3.azurestaticapps.net"

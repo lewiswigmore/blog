@@ -1,7 +1,7 @@
 {
   "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
   "configurations": {
-    "0xlews-blog": {
+    "lewis-blog": {
       "appLocation": ".",
       "outputLocation": "public",
       "appBuildCommand": "./bin/hugo.exe",

@@ -1,12 +1,12 @@
-baseURL = "/"
+baseURL = "https://mango-mud-0d92c8b03.3.azurestaticapps.net/"
 languageCode = "en-us"
-title = "0xlews"
+title = "lewis"
 theme = "PaperMod"
 
 # Author information
 [author]
 name = "Lewis"
-email = "contact@0xlews.com"  # Update with your actual contact email
+email = "lewis.wigmore@outlook.com" 
 
 # Site description for RSS and meta tags
 description = "Cybersecurity insights, malware analysis, and technical research by Lewis - a security analyst at Microsoft"
@@ -89,7 +89,7 @@ url = "https://github.com/lewiswigmore"
 
 [[params.socialIcons]]
 name = "twitter"
-url = "https://x.com/zeroxlews"
+url = "https://x.com/0xl3w1512058163"
 
 [[params.socialIcons]]
 name = "linkedin"
