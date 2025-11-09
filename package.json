@@ -1,0 +1,15 @@
+{
+  "name": "lewis-blog",
+  "version": "1.0.0",
+  "description": "Lewis's cybersecurity blog built with Hugo",
+  "scripts": {
+    "build": "./bin/hugo --minify",
+    "build:azure": "./bin/hugo --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lewiswigmore/blog.git"
+  },
+  "author": "Lewis Wigmore",
+  "license": "MIT"
+}
